@@ -2,6 +2,7 @@ from gettext import gettext as _
 
 import gtk
 import gedit
+import pyttsx
 
 # Menu item example, insert a new item in the Tools menu
 ui_str = """<ui>
@@ -21,6 +22,9 @@ class GeditTTSWindowHelper:
         
         self._window = window
         self._plugin = plugin
+
+        # Set up TTS (Win for now only)
+        self._ttsengine = pyttsx.init()
 
         # Insert menu items
         self._insert_menu()
