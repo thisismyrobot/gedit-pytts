@@ -7,8 +7,7 @@ taskkill /F /IM gedit.exe
 
 copy gedittts.gedit-plugin "C:\Program Files (x86)\gedit\lib\gedit-2\plugins"
 copy gedittts.py "C:\Program Files (x86)\gedit\lib\gedit-2\plugins"
+copy ttshelper.py "C:\Program Files (x86)\gedit\lib\gedit-2\plugins"
 xcopy /Y /Q /s /I pyttsx\* "C:\Program Files (x86)\gedit\lib\gedit-2\plugins\pyttsx"
 
-timeout /NOBREAK 3
-
-start "gedit" "c:\Program Files (x86)\gedit\bin\gedit.exe" 2> %tmp%\output.txt
+start "gedit" "c:\Program Files (x86)\gedit\bin\gedit.exe"

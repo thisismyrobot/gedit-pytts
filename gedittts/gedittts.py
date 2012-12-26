@@ -2,7 +2,7 @@ from gettext import gettext as _
 
 import gtk
 import gedit
-import pyttsx
+import ttshelper
 
 # Menu item example, insert a new item in the Tools menu
 ui_str = """<ui>
@@ -23,8 +23,8 @@ class GeditTTSWindowHelper:
         self._window = window
         self._plugin = plugin
 
-        # Set up TTS (Win for now only)
-        self._ttsengine = pyttsx.init()
+        # fire up tts
+        self._tts = ttshelper.TTSHelper(rate=150)
 
         # Insert menu items
         self._insert_menu()
@@ -79,14 +79,47 @@ class GeditTTSWindowHelper:
 
         doc.set_text('')
 
+    def fix_line(self, line):
+        line = line.replace(' "', " . Start string literal. ")
+        return line
+
+    def say_line(self, window):
+        doc = window.get_active_document()
+        row = doc.get_iter_at_mark(doc.get_insert()).get_line() + 1
+        line_start = doc.get_iter_at_line(row - 1)
+        line_end = line_start.copy()
+        line_end.forward_to_line_end()
+        line_text = doc.get_text(line_start, line_end)
+        line_text = self.fix_line(line_text)
+        if line_text.strip() == "":
+            self._tts.say("Line {0}. Blank line".format(row))
+        else:
+            # get indent
+            indent = len(line_text) - len(line_text.lstrip())
+            if indent == 0:
+                self._tts.say("Line {0}. {1}".format(row, line_text))
+            else:
+                self._tts.say("Line {0}, indent {1}. {2}".format(row, indent, line_text))
+ 
+    def on_key_press_event(self, window, event):
+        if event.state & (gtk.gdk.CONTROL_MASK):
+            self.say_line(window)
+
 
 class GeditTTS(gedit.Plugin):
     def __init__(self):
         gedit.Plugin.__init__(self)
         self._instances = {}
+        self._handlers = [None]
 
     def activate(self, window):
-        self._instances[window] = GeditTTSWindowHelper(self, window)
+        gttsh = GeditTTSWindowHelper(self, window)
+        self._instances[window] = gttsh
+
+        # set up key handler
+        if self._handlers[0] is None:
+            self._handlers[0] = window.connect('key-press-event',
+                                               gttsh.on_key_press_event)
 
     def deactivate(self, window):
         self._instances[window].deactivate()
