@@ -2,6 +2,7 @@ from gettext import gettext as _
 
 import gtk
 import gedit
+import pyanalyse
 import ttshelper
 
 # Menu item example, insert a new item in the Tools menu
@@ -26,81 +27,28 @@ class GeditTTSWindowHelper:
         # fire up tts
         self._tts = ttshelper.TTSHelper(rate=150)
 
-        # Insert menu items
-        self._insert_menu()
+        # build a txt analyser
+        self._pa = pyanalyse.PyAnalyser()
 
     def deactivate(self):
         print "Plugin stopped for", self._window
-        
-        # Remove any installed menu items
-        self._remove_menu()
         
         self._window = None
         self._plugin = None
         self._action_group = None
 
-    def _insert_menu(self):
-        # Get the GtkUIManager
-        manager = self._window.get_ui_manager()
-
-        # Create a new action group
-        self._action_group = gtk.ActionGroup("GeditTTSPluginActions")
-        self._action_group.add_actions([("GeditTTS", None, _("Clear document"),
-                                         None, _("Clear the document"),
-                                         self.on_clear_document_activate)])
-
-        # Insert the action group
-        manager.insert_action_group(self._action_group, -1)
-
-        # Merge the UI
-        self._ui_id = manager.add_ui_from_string(ui_str)
-
-    def _remove_menu(self):
-        # Get the GtkUIManager
-        manager = self._window.get_ui_manager()
-
-        # Remove the ui
-        manager.remove_ui(self._ui_id)
-
-        # Remove the action group
-        manager.remove_action_group(self._action_group)
-
-        # Make sure the manager updates
-        manager.ensure_update()
-
-    def update_ui(self):
-        self._action_group.set_sensitive(self._window.get_active_document() != None)
-
-    # Menu activate handlers
-    def on_clear_document_activate(self, action):
-        doc = self._window.get_active_document()
-        if not doc:
-            return
-
-        doc.set_text('')
-
-    def fix_line(self, line):
-        line = line.replace(' "', " . Start string literal. ")
-        return line
-
     def say_line(self, window):
         doc = window.get_active_document()
-        row = doc.get_iter_at_mark(doc.get_insert()).get_line() + 1
-        line_start = doc.get_iter_at_line(row - 1)
+        lineno = doc.get_iter_at_mark(doc.get_insert()).get_line()
+        lineoffset = doc.get_iter_at_mark(doc.get_insert()).get_line_offset()
+        line_start = doc.get_iter_at_line(lineno)
         line_end = line_start.copy()
         line_end.forward_to_line_end()
         line_text = doc.get_text(line_start, line_end)
-        line_text = self.fix_line(line_text)
-        if line_text.strip() == "":
-            self._tts.say("Line {0}. Blank line".format(row))
-        else:
-            # get indent
-            indent = len(line_text) - len(line_text.lstrip())
-            if indent == 0:
-                self._tts.say("Line {0}. {1}".format(row, line_text))
-            else:
-                self._tts.say("Line {0}, indent {1}. {2}".format(row, indent, line_text))
- 
+        body = doc.get_text(doc.get_start_iter(), doc.get_end_iter())
+        result = self._pa.analyse(1, line_text, lineno, lineoffset, body)
+        self._tts.say(result)
+
     def on_key_press_event(self, window, event):
         if event.state & (gtk.gdk.CONTROL_MASK):
             self.say_line(window)
@@ -124,6 +72,3 @@ class GeditTTS(gedit.Plugin):
     def deactivate(self, window):
         self._instances[window].deactivate()
         del self._instances[window]
-
-    def update_ui(self, window):
-        self._instances[window].update_ui()
