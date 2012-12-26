@@ -54,11 +54,15 @@ class PyAnalyser(object):
 
     def _position(self, repeat, line_text, lineno, lineoffset):
         text = ""
+        leading_ws = len(line_text) - len(line_text.lstrip())
         if repeat == 0:
-            text = "Line {0}, left {1}".format(lineno + 1, lineoffset)
-        elif repeat == 1:
-            indent = (len(line_text) - len(line_text.lstrip())) / self._indent
-            text = "Indent {0}".format(indent)
+            if leading_ws == 0:
+                text = "Line {0}, char {1}".format(lineno + 1, lineoffset)
+            else:
+                lineoffset -= leading_ws
+                text = "Line {0}, indent {1}, char {2}".format(lineno + 1,
+                                                               leading_ws,
+                                                               lineoffset)
             repeat = -1
         return text, repeat
 
