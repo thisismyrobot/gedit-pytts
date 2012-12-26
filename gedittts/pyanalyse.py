@@ -31,6 +31,8 @@ class PyAnalyser(object):
         elif depth == 2:
             text, self._repeat = self._position(self._repeat, line_text, lineno,
                                                 lineoffset)
+        elif depth == 3:
+            text, self._repeat = self._line(self._repeat, line_text)
 
         self._lineno = lineno
         self._lineoffset = lineoffset
@@ -59,3 +61,9 @@ class PyAnalyser(object):
             text = "Indent {0}".format(indent)
             repeat = -1
         return text, repeat
+
+    def _line(self, repeat, line_text):
+        text = "Blank Line"
+        if line_text.strip() != "":
+            text = line_text
+        return text, -1
