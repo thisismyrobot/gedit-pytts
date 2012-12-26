@@ -19,8 +19,6 @@ ui_str = """<ui>
 
 class GeditTTSWindowHelper:
     def __init__(self, plugin, window):
-        print "Plugin created for", window
-        
         self._window = window
         self._plugin = plugin
 
@@ -31,11 +29,8 @@ class GeditTTSWindowHelper:
         self._pa = pyanalyse.PyAnalyser(indent=4)
 
     def deactivate(self):
-        print "Plugin stopped for", self._window
-        
         self._window = None
         self._plugin = None
-        self._action_group = None
 
     def analyse_line(self, window, depth):
         doc = window.get_active_document()
@@ -53,7 +48,8 @@ class GeditTTSWindowHelper:
         self._tts.say(result)
 
     def on_key_press_event(self, window, event):
-        if event.state & (gtk.gdk.CONTROL_MASK):
+        # trap Alt + * combinations
+        if event.state & (gtk.gdk.MOD1_MASK):
             # trap analyse text by looking for integer pressed
             i = None
             try:
