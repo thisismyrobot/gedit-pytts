@@ -2,7 +2,7 @@ import os.path
 
 
 class PyAnalyser(object):
-    """ Analyses python.
+    """ Analyses a location amongst python text.
     """
     def __init__(self, indent=4):
         self._indent = 4
@@ -12,6 +12,9 @@ class PyAnalyser(object):
         self._repeat = 0 # set to -1 to change between modes in depth
 
     def analyse(self, depth, line_text, lineno, lineoffset, body, uri):
+        """ Chooses the correct handler based on the type of analysis (depth)
+            required.
+        """
         text = ""
 
         # cancel repeat recording between depth changes
@@ -40,6 +43,8 @@ class PyAnalyser(object):
         return text
 
     def _filename(self, repeat, uri):
+        """ Returns filename/path information.
+        """
         text = ""
         if uri is None:
             text = "Unsaved file"
@@ -53,6 +58,8 @@ class PyAnalyser(object):
         return text, repeat
 
     def _position(self, repeat, line_text, lineno, lineoffset):
+        """ Returns positional information including indent.
+        """
         text = ""
         leading_ws = len(line_text) - len(line_text.lstrip())
         if repeat == 0:
@@ -67,6 +74,8 @@ class PyAnalyser(object):
         return text, repeat
 
     def _line(self, repeat, line_text):
+        """ Just returns lines, but will soon have contextual information too.
+        """
         text = "Blank Line"
         if line_text.strip() != "":
             text = line_text
