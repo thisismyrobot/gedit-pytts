@@ -1,4 +1,6 @@
 import os.path
+import StringIO
+import tokenize
 
 
 class PyAnalyser(object):
@@ -78,14 +80,38 @@ class PyAnalyser(object):
         """
         text = ""
 
-        # blank lines
-        if line_text.strip() == "":
-            text = "Blank Line"
-        # single line comments
-        elif line_text.lstrip()[0] == "#":
-            text = "Single line comment. {0}".format(line_text.strip()[1:].strip())
-        # catch-all
-        else:
-            text = line_text
+        # tokenize the line (makes for sane matching of components)
+        line_tokens = list(tokenize.generate_tokens(
+                                StringIO.StringIO(line_text.strip()).readline))
 
-        return text, -1
+        for i, (type, val, _, _, _) in enumerate(line_tokens):
+
+            # things we don't want
+            if val in (":",):
+                continue
+
+            # blank lines on their own
+            if type == tokenize.ENDMARKER and len(line_tokens) == 1:
+                text += "Blank Line"
+
+            # single line comment
+            elif type == tokenize.COMMENT:
+                text += "Comment: {0}".format(val[1:].strip())
+
+            # function definition
+            elif type == tokenize.NAME and val == "def":
+                text += "Function definition: def {0}:".format(line_tokens[i+1][1])
+                del line_tokens[i+1]
+
+            # catch-all
+            else:
+                text += val
+
+            text += ". "
+
+        # clean up string having lots of full stops at end
+        text = text.strip()
+        while text[-1] == ".":
+            text = text[:-1].strip()
+
+        return text.strip(), -1

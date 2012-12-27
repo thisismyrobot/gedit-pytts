@@ -18,7 +18,7 @@ And a helper to just return the text component from this method.
 
     >>> paline = lambda repeat, line: pa._line(repeat, line)[0]
 
-Basic usage
+Blank lines
 -----------
 
 Blank lines are noted as such.
@@ -26,15 +26,18 @@ Blank lines are noted as such.
     >>> paline(0, "")
     'Blank Line'
 
-Other lines are returned verbatim
+Functions
+---------
+
+Are identified as such
 
     >>> paline(0, "def hello:")
-    'def hello:'
+    'Function definition: def hello:'
 
 Repeated calls have no effect (yet)
 
     >>> paline(1, "def hello:")
-    'def hello:'
+    'Function definition: def hello:'
 
 Comments
 --------
@@ -42,14 +45,18 @@ Comments
 Single line comments are identified
 
     >>> paline(0, "# Here's a comment")
-    "Single line comment. Here's a comment"
+    "Comment: Here's a comment"
 
 Even it they are indented
 
     >>> paline(0, "    # Here's another comment")
-    "Single line comment. Here's another comment"
+    "Comment: Here's another comment"
 
-But not if they are further along in a line
+Combinations
+------------
+
+Multiple entries are appended together on a line, with a full stop and space
+between.
 
     >>> paline(0, "def funct:  # Wow, I made a function")
-    'def funct:  # Wow, I made a function'
+    'Function definition: def funct:. Comment: Wow, I made a function'
