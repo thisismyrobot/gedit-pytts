@@ -18,5 +18,6 @@ while True:
     if not failure:
         print "All tests passed!"
 
+    print "\nPress enter to re-run...",
     raw_input()
     os.system(['clear','cls'][os.name == 'nt'])

@@ -1,6 +1,8 @@
 Position identification
 =======================
 
+Helpers to give the user an idea where they are in the document.
+
 Setup
 -----
 
