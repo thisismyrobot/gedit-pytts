@@ -1,9 +1,9 @@
 [Gedit Plugin]
 Loader=python
-Module=gedittts
+Module=geditpytts
 IAge=2
-Name=gedit TTS
-Description=A Python-dev TTS plug-in
+Name=Gedit Python TTS
+Description=A Python-dev TTS plug-in for Gedit
 Authors=Robert Wallhead <robert@thisismyrobot.com>
 Copyright=Copyright © 2012 Robert Wallhead <robert@thisismyrobot.com>
 Website=http://www.thisismyrobot.com

@@ -5,19 +5,8 @@ import gedit
 import pyanalyse
 import ttshelper
 
-# Menu item example, insert a new item in the Tools menu
-ui_str = """<ui>
-  <menubar name="MenuBar">
-    <menu name="ToolsMenu" action="Tools">
-      <placeholder name="ToolsOps_2">
-        <menuitem name="GeditTTS" action="GeditTTS"/>
-      </placeholder>
-    </menu>
-  </menubar>
-</ui>
-"""
 
-class GeditTTSWindowHelper:
+class GeditPyTTSWindowHelper:
     def __init__(self, plugin, window):
         self._window = window
         self._plugin = plugin
@@ -60,14 +49,14 @@ class GeditTTSWindowHelper:
                 self.analyse_line(window, i)
 
 
-class GeditTTS(gedit.Plugin):
+class GeditPyTTS(gedit.Plugin):
     def __init__(self):
         gedit.Plugin.__init__(self)
         self._instances = {}
         self._handlers = [None]
 
     def activate(self, window):
-        gttsh = GeditTTSWindowHelper(self, window)
+        gttsh = GeditPyTTSWindowHelper(self, window)
         self._instances[window] = gttsh
 
         # set up key handler
