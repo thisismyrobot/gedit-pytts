@@ -39,7 +39,7 @@ class GeditPyTTSWindowHelper:
     def on_key_press_event(self, window, event):
         # trap Alt + * combinations
         if event.state & (gtk.gdk.MOD1_MASK):
-            # trap analyse text by looking for integer pressed
+            # trap analyse text commands by looking for integer pressed
             i = None
             try:
                 i = int(event.string)
