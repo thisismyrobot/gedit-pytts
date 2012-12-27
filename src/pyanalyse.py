@@ -76,7 +76,16 @@ class PyAnalyser(object):
     def _line(self, repeat, line_text):
         """ Just returns lines, but will soon have contextual information too.
         """
-        text = "Blank Line"
-        if line_text.strip() != "":
+        text = ""
+
+        # blank lines
+        if line_text.strip() == "":
+            text = "Blank Line"
+        # single line comments
+        elif line_text.lstrip()[0] == "#":
+            text = "Single line comment. {0}".format(line_text.strip()[1:].strip())
+        # catch-all
+        else:
             text = line_text
+
         return text, -1
