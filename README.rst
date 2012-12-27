@@ -13,6 +13,16 @@ Currently
 Just testing stuff out on Windows 7 with Gedit 2.30.1 and the built-in SAPI5
 TTS.
 
+Can use Alt + 1/2/3 to get levels of context about the file you're working on.
+
+Installation
+------------
+
+Currently the deploy.bat (when run as Admin) pushes the files into the correct
+places in Windows 7. I'd recommend reading it and doing it manually to suit
+your setup. There are plenty of helpful pointers under "Install Gedit Plugin" on
+Google.
+
 Modules
 -------
 
