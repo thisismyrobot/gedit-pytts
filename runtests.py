@@ -5,10 +5,10 @@ import sys
 
 
 sys.path.append(".\src")
-files = glob.glob('tests\*.txt')
 opts = doctest.REPORT_ONLY_FIRST_FAILURE|doctest.ELLIPSIS|doctest.NORMALIZE_WHITESPACE
 
 while True:
+    files = glob.glob('tests\*.rst')
     failure = False
     for f in files:
         failed, tested = doctest.testfile(f, optionflags=opts)
