@@ -39,6 +39,27 @@ Repeated calls have no effect (yet)
     >>> paline(1, "def hello:")
     'Function definition: def hello:'
 
+Classes
+-------
+
+Work like functions
+
+    >>> paline(0, "class testclass:")
+    'Class definition: class testclass:'
+
+And repeated calls show inheritance (or lack thereof)
+
+    >>> paline(1, "class testclass:")
+    'No inheritance'
+
+    >>> paline(0, "class testclass(object, yucky.mixin): # comment (with arg test, )")
+    'Class definition: class testclass:. Comment: comment (with arg test, )'
+
+Extra multi-part info is ignored if describing inheritance
+
+    >>> paline(1, "class testclass(object, yucky.mixin): # comment (with arg test, )")
+    'Inherits object , yucky dot mixin'
+
 Comments
 --------
 

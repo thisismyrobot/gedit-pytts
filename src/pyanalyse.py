@@ -84,10 +84,10 @@ class PyAnalyser(object):
         line_tokens = list(tokenize.generate_tokens(
                                 StringIO.StringIO(line_text.strip()).readline))
 
-        for i, (type, val, _, _, _) in enumerate(line_tokens):
+        for i, (type, val, _, _, line) in enumerate(line_tokens):
 
             # things we don't want
-            if val in (":",):
+            if val.lower() in (":",):
                 continue
 
             # blank lines on their own
@@ -99,9 +99,39 @@ class PyAnalyser(object):
                 text += "Comment: {0}".format(val[1:].strip())
 
             # function definition
-            elif type == tokenize.NAME and val == "def":
+            elif type == tokenize.NAME and val.lower() == "def":
                 text += "Function definition: def {0}:".format(line_tokens[i+1][1])
                 del line_tokens[i+1]
+
+            # class definition
+            elif type == tokenize.NAME and val.lower() == "class":
+                # see if has inheritance
+                inherits = None
+                end = 0
+                if line_tokens[i+2][1] == "(":
+                    end = i+3
+                    while line_tokens[end][1] != ")":
+                        end += 1
+                    # read in the inheritance
+                    inherits = " ".join([t[1]
+                                        for t
+                                        in line_tokens[i+3:end]])
+                if repeat == 0:
+                    # return the def without the inheritance
+                    text += "Class definition: class {0}:".format(line_tokens[i+1][1])
+                    del line_tokens[i+1]
+                    # need to delete the inheritance
+                    if inherits is not None:
+                        for j in range(end - i - 1):
+                            del line_tokens[i + 1]
+                elif repeat == 1:
+                    # return the inheritance only, if there is any
+                    if inherits is not None:
+                        text += "Inherits {0}".format(inherits.replace(".", "dot"))
+                    else:
+                        text += "No inheritance"
+                    # we don't process any more tokens from here
+                    break
 
             # catch-all
             else:
@@ -111,7 +141,8 @@ class PyAnalyser(object):
 
         # clean up string having lots of full stops at end
         text = text.strip()
-        while text[-1] == ".":
-            text = text[:-1].strip()
+        if len(text) > 2:
+            while text[-1] == ".":
+                text = text[:-1].strip()
 
         return text.strip(), -1
