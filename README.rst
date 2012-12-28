@@ -47,5 +47,6 @@ How-to:
  1. Open Admin cmd prompt
  2. cd to your pywin install (where pywin32-218.win32-py2.6.exe is)
  3. run:
-        set PYTHONPATH-C:\Program Files (x86)\gedit\bin\Lib\site-packages
-        c:\Python27\Scripts\easy_install.exe --install-dir="C:\Program Files (x86)\gedit\bin\Lib\site-packages" pywin32-218.win32-py2.6.exe
+        set PYTHONPATH=C:\\Program Files (x86)\\gedit\\bin\\Lib\\site-packages
+
+        c:\\Python27\\Scripts\\easy_install.exe --install-dir="C:\\Program Files (x86)\\gedit\\bin\\Lib\\site-packages" pywin32-218.win32-py2.6.exe
