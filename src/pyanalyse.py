@@ -145,4 +145,7 @@ class PyAnalyser(object):
             while text[-1] == ".":
                 text = text[:-1].strip()
 
-        return text.strip(), -1
+        if repeat == 1:
+            repeat = -1
+
+        return text.strip(), repeat
